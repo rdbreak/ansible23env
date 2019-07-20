@@ -1,4 +1,4 @@
-# Ansible Study/Test Environment powered by Ansible and Vagrant. 
+# Ansible 2.3 Study/Test Environment powered by Ansible and Vagrant. 
 
 ## Required software before setting up:
 - Ansible - (`yum install ansible` or `brew install ansible`)
@@ -41,7 +41,7 @@ Remember to add the IP addresses to your local host file if you want to connect 
 Username - user
 Password - password
 - For root - use `sudo` or `sudo su`
-Access example - `ssh user@192.168.55.21`
+Access example - `ssh user@192.168.55.61`
 
 ## Help
 If you're having problems with the environment, please submit an issue by going to the `ISSUES` tab at the top. If you have more questions, looking for practice exams to use against this environment, or just looking for a fantastic Red Hat community to join, please navigate to #practiceexam in the [Red Hat Certs Slack Workspace](https://join.slack.com/t/redhat-certs/shared_invite/enQtNjAxNDc3MzYyMTAxLWZlM2ZhMGRlNGI2YjQyMzQ4NWEyNDIyYTJiNzcxM2E1ZDVkZmQ4MzU2MTc0ZDRlNzg2MTU5NWIwZjFjZDdjMGE).
