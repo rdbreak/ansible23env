@@ -41,13 +41,13 @@ end
 #  end
 #end
 config.vm.define "control" do |control|
-  control.vm.box = "CentosBox/Centos7-v7.3-Web-Server"
-  control.vm.box_version = "17.08.10"
+  control.vm.box = "centos/7"
+  control.vm.box_version = "1705.02"
   control.vm.provision :shell, :inline => "sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config; sudo systemctl restart sshd;", run: "always"
   control.vm.provision :shell, :inline => "sudo yum install -y epel-release; sudo yum -y install python2 sshpass python-devel gcc; sudo curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py; python get-pip.py; sudo pip install -U pip; sudo pip install pexpect", run: "always"
   control.vm.provision :shell, :inline => "pip install 'ansible==2.7.2.0'", run: "always"
 #  control.vm.hostname = "control.test.example.com"
-  control.vm.network "private_network", ip: "192.168.55.60"
+control.vm.network "private_network", ip: "192.168.55.60"
   control.vm.provider :virtualbox do |control|
     control.customize ['modifyvm', :id,'--memory', '2048']
   end
@@ -60,6 +60,14 @@ config.vm.define "control" do |control|
     ansible.config_file = "/vagrant/ansible.cfg"
     ansible.limit = "all"
     control.vm.provision :shell, :inline => "pip install 'ansible==2.3.1.0'", run: "always"
-end
+  end
+  control.vm.provision :ansible_local do |ansible|
+    ansible.playbook = '/vagrant/playbooks/envplaybooks/welcome.yml'
+    ansible.install = false
+    ansible.compatibility_mode = "2.0"
+    ansible.inventory_path = "/vagrant/inventory"
+    ansible.config_file = "/vagrant/ansible.cfg"
+    ansible.limit = "all"
+  end
 end
 end

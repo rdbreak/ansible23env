@@ -22,15 +22,3 @@
       timeout: 10
     become: yes
     become_user: user
-  - name: Welcome to the Ansible 2.3 Study/Test Environment!
-    debug:
-      msg:
-        - 'Next Steps: Accessing The Systems:'
-        - '- Control - 192.168.55.60'
-        - '- System 1 - 192.168.55.61'
-        - '- System 2 - 192.168.55.62'
-        - '- Username - user'
-        - '- Password - password'
-        - '- For root - use `sudo` or `sudo su`'
-        - '- Access example - ssh user@192.168.55.60'
-        - ''
