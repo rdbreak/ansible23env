@@ -12,6 +12,22 @@
       shell: /bin/bash
       groups: wheel
       append: yes
+  - name: Erasing Repos
+    shell: rm -rf /etc/yum.repos.d/*
+  - name: Creating Repo File
+    file:
+      path: /etc/yum.repos.d/rpms.repo
+      state: touch
+      mode: 0755
+  - name: Building Repo File
+    blockinfile:
+      dest: /etc/yum.repos.d/rpms.repo
+      block: |
+       [rpms]
+       name=rpms
+       baseurl=http://repo/rpms
+       gpgcheck=0
+       enabled=1
   - name: Changing User Password
     shell: echo password | sudo passwd user --stdin
   - name: Fixing hosts file
@@ -44,10 +60,7 @@
       path: /etc/hosts
       line: 192.168.55.62 node2.test.example.com node2
       create: yes
-#  - name: Configuring network
-#    shell: nmcli con mod "System eth0" ipv4.addresses 192.168.55.60/24 ipv4.gateway 192.168.55.1 ipv4.dns 8.8.8.8 ipv4.method manual
-#  - name: Restarted Network
-#    shell: nmcli con up "System eth0"
+
   - name: Starting Firewalld
     service: name=firewalld state=started
   - name: Enabling Firewall Services

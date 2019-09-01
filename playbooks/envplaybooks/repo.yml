@@ -12,6 +12,22 @@
       shell: /bin/bash
       groups: wheel
       append: yes
+  - name: Erasing Repos
+    shell: rm -rf /etc/yum.repos.d/*
+  - name: Creating Repo File
+    file:
+      path: /etc/yum.repos.d/rpms.repo
+      state: touch
+      mode: 0755
+  - name: Building Repo File
+    blockinfile:
+      dest: /etc/yum.repos.d/rpms.repo
+      block: |
+       [rpms]
+       name=rpms
+       baseurl=file:///var/www/html/rpms
+       gpgcheck=0
+       enabled=1
   - name: Changing User Password
     shell: echo password | sudo passwd user --stdin
   - name: Fixing hosts file
@@ -44,16 +60,10 @@
       path: /etc/hosts
       line: 192.168.55.62 node2.test.example.com node2
       create: yes
-  - name: Configured network. Downloading Repo Packages
-#    shell: nmcli con mod "System enp0s8" ipv4.addresses 192.168.55.59/24 ipv4.gateway 192.168.55.1 ipv4.dns 8.8.8.8 ipv4.method manual
-#  - name: Downloading Repo Packages
-    shell: yum group install "Development Tools" "Server with GUI" "Web Server" "Directory Server" "Directory Client" "Python" -y --downloadonly --downloaddir=/var/www/html/rpms ;yum install -y man-pages httpd-manual selinux\* sssd\*
-  - name: Configuring Repo For System
-    shell: createrepo /var/www/html/rpms
   - name: Enabling services
-    shell: for i in httpd firewalld chronyd ; do systemctl enable $i;done
+    shell: for i in httpd ; do systemctl enable $i;done
   - name: Starting services
-    shell: for i in httpd firewalld chronyd ; do systemctl start $i;done
+    shell: for i in httpd ; do systemctl start $i;done
     ignore_errors: true
   - name: Starting Firewalld
     service: name=firewalld state=started
@@ -63,19 +73,8 @@
     command: firewall-cmd --reload
   - name: Enabling IPV6
     shell: sysctl net.ipv6.conf.lo.disable_ipv6=0 ; sysctl net.ipv6.conf.all.disable_ipv6=0
-#  - name: Permissions Fixed. Configuring IPA server...(Est. Time - 7 minutes)
-#    shell: chmod 644 /usr/lib/python3.6/site-packages/urllib3/packages/ssl_match_hostname.py;chmod u+x /usr/lib/python3.6/site-packages/urllib3/packages/ssl_match_hostname.py 
   - name: Setting SELinux To Permissive
     shell: setenforce 0
-#    async: 1500
-#    poll: 0
-#    register: ipa_config_sleeper
-#    ignore_errors: yes
-#  - name: Still Working On IPA Configuration...It takes time ¯\_(ツ)_/¯
-#    async_status: jid={{ ipa_config_sleeper.ansible_job_id }}
-#    register: job_result
-#    until: job_result.finished
-#    retries: 200
   - name: Creating Welcome Message
     file:
       path: /etc/profile.d/welcome.sh
