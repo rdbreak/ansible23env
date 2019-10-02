@@ -6,6 +6,14 @@
   tasks:
   - name: Setting Hostname
     command: hostnamectl set-hostname node2.test.example.com
+  - name: Creating Ansible User
+    user:
+      name: user
+      shell: /bin/bash
+      groups: wheel
+      append: yes
+  - name: Changing User Password
+    shell: echo password | sudo passwd user --stdin
   - name: Erasing Repos
     shell: rm -rf /etc/yum.repos.d/*
   - name: Creating Repo File

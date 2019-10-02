@@ -6,6 +6,14 @@
   tasks:
   - name: Setting Hostname
     command: hostnamectl set-hostname control.test.example.com
+  - name: Creating Ansible User
+    user:
+      name: user
+      shell: /bin/bash
+      groups: wheel
+      append: yes
+  - name: Changing User Password
+    shell: echo password | sudo passwd user --stdin
   - name: Erasing Repos
     shell: rm -rf /etc/yum.repos.d/*
   - name: Fixing hosts file
@@ -41,13 +49,15 @@
   - name: Starting Firewalld
     service: name=firewalld state=started
   - name: Enabling Firewall Services
-    command: firewall-cmd --permanent --add-service=http --add-service=https --add-service=ntp --add-service=dns --add-service=kerberos --add-service=ldap --add-service=ldaps --add-service=ftp
-#  - name: Generating RSA Key
-#    command : ssh-keygen -q -t rsa -f /home/vagrant/.ssh/id_rsa -C "" -N ""
-  - name: Generating RSA Key
-    openssh_keypair:
-      path: /home/vagrant/.ssh/id_rsa
-      force: True
+    shell: firewall-cmd --permanent --add-service=http --add-service=https --add-service=ntp --add-service=dns --add-service=kerberos --add-service=ldap --add-service=ldaps --add-service=ftp
+  - name: Removing Existing RSA Key
+    shell: rm -f /home/user/.ssh/id_rsa
+  - name: Generating New RSA Key
+    shell: ssh-keygen -q -t rsa -f /home/user/.ssh/id_rsa -C "" -N ""
+    args: 
+      creates: /home/user/.ssh/id_rsa
+    become_user: user
+    become_method: sudo
   - name: Creating Welcome Message
     file:
       path: /etc/profile.d/welcome.sh
@@ -77,4 +87,6 @@
         # This system is running `cat /etc/redhat-release`
         # kernel is `uname -r`
         #
+        # Repo
+        # Available to use from http://repo.test.example.com/rpms
         "
