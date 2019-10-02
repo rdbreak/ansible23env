@@ -28,8 +28,6 @@
        baseurl=file:///var/www/html/rpms
        gpgcheck=0
        enabled=1
-  - name: Changing User Password
-    shell: echo password | sudo passwd user --stdin
   - name: Fixing hosts file
     lineinfile:
       dest: /etc/hosts

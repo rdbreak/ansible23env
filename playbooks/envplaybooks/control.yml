@@ -6,30 +6,8 @@
   tasks:
   - name: Setting Hostname
     command: hostnamectl set-hostname control.test.example.com
-  - name: Creating Ansible User
-    user:
-      name: user
-      shell: /bin/bash
-      groups: wheel
-      append: yes
   - name: Erasing Repos
     shell: rm -rf /etc/yum.repos.d/*
-  - name: Creating Repo File
-    file:
-      path: /etc/yum.repos.d/rpms.repo
-      state: touch
-      mode: 0755
-  - name: Building Repo File
-    blockinfile:
-      dest: /etc/yum.repos.d/rpms.repo
-      block: |
-       [rpms]
-       name=rpms
-       baseurl=http://repo/rpms
-       gpgcheck=0
-       enabled=1
-  - name: Changing User Password
-    shell: echo password | sudo passwd user --stdin
   - name: Fixing hosts file
     lineinfile:
       dest: /etc/hosts
@@ -60,17 +38,16 @@
       path: /etc/hosts
       line: 192.168.55.62 node2.test.example.com node2
       create: yes
-
   - name: Starting Firewalld
     service: name=firewalld state=started
   - name: Enabling Firewall Services
     command: firewall-cmd --permanent --add-service=http --add-service=https --add-service=ntp --add-service=dns --add-service=kerberos --add-service=ldap --add-service=ldaps --add-service=ftp
-  - name: Installing Packages for Ansible Installation
-    command: yum install -y python-devel vim gcc python-cryptography
+#  - name: Generating RSA Key
+#    command : ssh-keygen -q -t rsa -f /home/vagrant/.ssh/id_rsa -C "" -N ""
   - name: Generating RSA Key
-    command : ssh-keygen -q -t rsa -f /home/user/.ssh/id_rsa -C "" -N ""
-    become: yes
-    become_user: user
+    openssh_keypair:
+      path: /home/vagrant/.ssh/id_rsa
+      force: True
   - name: Creating Welcome Message
     file:
       path: /etc/profile.d/welcome.sh
@@ -96,7 +73,7 @@
         #  \/____________\/_________/\/_/     \/_/\_\/      \/_/    \_\\/_________/\_______\/     
         '"#
         #
-         # You are logged into \"`hostname`\" as user \"`whoami`\"
+        # You are logged into \"`hostname`\" as user \"`whoami`\"
         # This system is running `cat /etc/redhat-release`
         # kernel is `uname -r`
         #

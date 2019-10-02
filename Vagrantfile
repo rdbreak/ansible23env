@@ -21,6 +21,7 @@ config.vm.define "node2" do |node2|
     node2.memory = "1024"
   end
 end
+
 config.vm.define "repo" do |repo|
   repo.vm.box = "rdbreak/ansible23repo"
 #  repo.vm.hostname = "repo.test.example.com"
@@ -33,14 +34,14 @@ config.vm.define "control" do |control|
   control.vm.box = "centos/7"
   control.vm.box_version = "1705.02"
   control.vm.provision :shell, :inline => "sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config; sudo systemctl restart sshd;", run: "always"
-  control.vm.provision :shell, :inline => "sudo yum install -y epel-release; yum install setroubleshoot-server -y ;sudo yum -y install python2 sshpass python-devel gcc; sudo curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py; python get-pip.py; sudo pip install -U pip; sudo pip install pexpect", run: "always"
-  control.vm.provision :shell, :inline => "pip install 'ansible==2.7.2.0'", run: "always"
+  control.vm.provision :shell, :inline => "yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -y; sudo yum install -y sshpass libselinux-python python-pip python-devel httpd sshpass vsftpd createrepo pki-ca", run: "always"
+  control.vm.provision :shell, :inline => "yum groupinstall 'Development Tools' -y ;  python -m pip install -U pip ; python -m pip install pexpect; python -m pip install ansible", run: "always"
 #  control.vm.hostname = "control.test.example.com"
 control.vm.network "private_network", ip: "192.168.55.60"
   control.vm.provider :virtualbox do |control|
     control.customize ['modifyvm', :id,'--memory', '2048']
   end
-  control.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: ".git/"
+#  control.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: ".git/"
   control.vm.provision :ansible_local do |ansible|
     ansible.playbook = '/vagrant/playbooks/envplaybooks/master.yml'
     ansible.install = false
@@ -48,7 +49,7 @@ control.vm.network "private_network", ip: "192.168.55.60"
     ansible.inventory_path = "/vagrant/inventory"
     ansible.config_file = "/vagrant/ansible.cfg"
     ansible.limit = "all"
-    control.vm.provision :shell, :inline => "pip install 'ansible==2.3.1.0'", run: "always"
+    control.vm.provision :shell, :inline => "python -m pip install 'ansible==2.3.1.0'", run: "always"
   end
   control.vm.provision :ansible_local do |ansible|
     ansible.playbook = '/vagrant/playbooks/envplaybooks/welcome.yml'

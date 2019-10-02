@@ -6,8 +6,6 @@
   tasks:
   - name: Setting Hostname
     command: hostnamectl set-hostname node1.test.example.com
-  - name: Changing User Password
-    shell: echo password | sudo passwd user --stdin
   - name: Erasing Repos
     shell: rm -rf /etc/yum.repos.d/*
   - name: Creating Repo File
@@ -59,9 +57,9 @@
   - name: Enabling Firewall Services
     command: firewall-cmd --permanent --add-service=http --add-service=https --add-service=ntp --add-service=dns --add-service=kerberos --add-service=ldap --add-service=ldaps --add-service=ftp
   - name: Generating RSA Key
-    command : ssh-keygen -q -t rsa -f /etc/ssh/ssh_host_rsa_key -C "" -N ""
-    args:
-      creates: /etc/ssh/ssh_host_rsa_key
+    openssh_keypair:
+      path: /home/vagrant/.ssh/id_rsa
+      force: True
   - name: Fixing Resolv File
     shell: echo 'nameserver 8.8.8.8' > /etc/resolv.conf
   - name: Enabling services
