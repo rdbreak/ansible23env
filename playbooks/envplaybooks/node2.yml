@@ -14,6 +14,13 @@
       append: yes
   - name: Changing User Password
     shell: echo password | sudo passwd user --stdin
+  - name: Make sure user is in the sudoers configuration
+    lineinfile:
+      path: /etc/sudoers
+      regexp: '^# %users  localhost'
+      insertafter: '^# %users  localhost'
+      line: 'user ALL=(ALL) NOPASSWD: ALL'
+      state: present
   - name: Erasing Repos
     shell: rm -rf /etc/yum.repos.d/*
   - name: Creating Repo File

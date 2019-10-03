@@ -1,5 +1,8 @@
 ---
 - hosts: control
+  become: yes
+  become_user: user
+  ignore_errors: yes
   tasks: 
   - name: Sending Key to node1
     expect:
@@ -10,9 +13,6 @@
         'password': 'password'
         '\]\$': 'logout'
       timeout: 10
-    become: yes
-    become_user: user
-    ignore_errors: yes
   - name: Sending Key to node2
     expect:
       command: ssh-copy-id -i /home/user/.ssh/id_rsa.pub user@node2.test.example.com 
@@ -22,6 +22,3 @@
         'password': 'password'
         '\]\$': 'logout'
       timeout: 10
-    become: yes
-    become_user: user
-    ignore_errors: yes
