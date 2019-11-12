@@ -10,7 +10,7 @@ config.vm.define "node1" do |node1|
 #  node1.vm.hostname = "node1.test.example.com"
   node1.vm.network "private_network", ip: "192.168.55.61"
   node1.vm.provider "virtualbox" do |node1|
-    node1.memory = "1024"
+    node1.memory = "512"
   end
 end
 config.vm.define "node2" do |node2|
@@ -18,7 +18,7 @@ config.vm.define "node2" do |node2|
 #  node2.vm.hostname = "node2.test.example.com"
   node2.vm.network "private_network", ip: "192.168.55.62"
   node2.vm.provider "virtualbox" do |node2|
-    node2.memory = "1024"
+    node2.memory = "512"
   end
 end
 
