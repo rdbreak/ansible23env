@@ -1,12 +1,13 @@
 ---
-- hosts: node2
+- name: Configuring Node2
+  hosts: node2
   strategy: free
   gather_facts: true
   become: true
   tasks:
   - name: Setting Hostname
-    command: hostnamectl set-hostname node2.test.example.com
-  - name: Creating Ansible User
+    hostname: name=node2.test.example.com
+  - name: Creating User Account
     user:
       name: user
       shell: /bin/bash
@@ -37,47 +38,17 @@
        baseurl=http://repo/rpms
        gpgcheck=0
        enabled=1
-  - name: Fixing hosts file
-    lineinfile:
+  - name: Building host file
+    copy:
       dest: /etc/hosts
-      regexp: '^127\.0\.0\.1'
-      state: absent
-  - name: Rebuilding host file
-    lineinfile:
-      path: /etc/hosts
-      line: 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
-      create: yes
-  - name: Adding control address to hosts file
-    lineinfile:
-      path: /etc/hosts
-      line: 192.168.55.60 control.test.example.com control
-      create: yes
-  - name: Adding Repo address to hosts file
-    lineinfile:
-      path: /etc/hosts
-      line: 192.168.55.59 repo.test.example.com repo
-      create: yes
-  - name: Adding node1 IP address to hosts file
-    lineinfile:
-      path: /etc/hosts
-      line: 192.168.55.61 node1.test.example.com node1
-      create: yes
-  - name: Adding node2 IP address to hosts file
-    lineinfile:
-      path: /etc/hosts
-      line: 192.168.55.62 node2.test.example.com node2
-      create: yes
+      content: "127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4\n192.168.55.60 control.test.example.com control\n192.168.55.59 repo.test.example.com repo\n192.168.55.61 node1.test.example.com node1\n192.168.55.62 node2.test.example.com node2"
+      force: yes
   - name: Generating RSA Key
     openssh_keypair:
       path: /home/vagrant/.ssh/id_rsa
       force: True
   - name: Fixing Resolv File
     shell: echo 'nameserver 8.8.8.8' > /etc/resolv.conf
-  - name: Enabling services
-    service: name=firewalld enabled=true
-  - name: Starting services
-    service: name=firewalld state=started
-    tags: repo
   - name: Creating Welcome Message
     file:
       path: /etc/profile.d/welcome.sh
@@ -103,9 +74,9 @@
          #  \/_/     \/_/\/_________/    \/_____/\/__________/ \________/  
          '"#
          #
-         # You are logged into \"`hostname`\" as user \"`whoami`\"
+         # You are logged into \"`hostname`\" as the \"`whoami`\" account.
          # This system is running `cat /etc/redhat-release`
-         # kernel is `uname -r`
+         #
          #
          "
 ...

@@ -4,7 +4,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 # Use same SSH key for each machine
 config.ssh.insert_key = false
 config.vm.box_check_update = true
-  
+
+# Node 1 configuration
 config.vm.define "node1" do |node1|
   node1.vm.box = "rdbreak/ansible23node"
 #  node1.vm.hostname = "node1.test.example.com"
@@ -13,6 +14,8 @@ config.vm.define "node1" do |node1|
     node1.memory = "512"
   end
 end
+
+# Node 2 configuration
 config.vm.define "node2" do |node2|
   node2.vm.box = "rdbreak/ansible23node"
 #  node2.vm.hostname = "node2.test.example.com"
@@ -22,6 +25,7 @@ config.vm.define "node2" do |node2|
   end
 end
 
+# Repo node configuration
 config.vm.define "repo" do |repo|
   repo.vm.box = "rdbreak/ansible23repo"
 #  repo.vm.hostname = "repo.test.example.com"
@@ -30,6 +34,8 @@ config.vm.define "repo" do |repo|
     repo.memory = "1024"
   end
 end
+
+# Control node configuration
 config.vm.define "control" do |control|
   control.vm.box = "centos/7"
   control.vm.box_version = "1705.02"
@@ -42,6 +48,8 @@ control.vm.network "private_network", ip: "192.168.55.60"
     control.customize ['modifyvm', :id,'--memory', '2048']
   end
 #  control.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: ".git/"
+
+# Running Master playbook that begins configuration
   control.vm.provision :ansible_local do |ansible|
     ansible.playbook = '/vagrant/playbooks/envplaybooks/master.yml'
     ansible.install = false
@@ -51,6 +59,8 @@ control.vm.network "private_network", ip: "192.168.55.60"
     ansible.limit = "all"
     control.vm.provision :shell, :inline => "python -m pip install 'ansible==2.3.1.0'", run: "always"
   end
+
+# Creating welcome message
   control.vm.provision :ansible_local do |ansible|
     ansible.playbook = '/vagrant/playbooks/envplaybooks/welcome.yml'
     ansible.install = false
