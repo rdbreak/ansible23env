@@ -6,7 +6,7 @@
   become: true
   tasks:
   - name: Setting Hostname
-    hostname: name=control.test.example.com
+    hostname: name=control.ansi.example.com
   - name: Creating Ansible User
     user:
       name: user
@@ -27,7 +27,7 @@
   - name: Building host file
     copy:
       dest: /etc/hosts
-      content: "127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4\n192.168.55.60 control.test.example.com control\n192.168.55.59 repo.test.example.com repo\n192.168.55.61 node1.test.example.com node1\n192.168.55.62 node2.test.example.com node2"
+      content: "127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4\n192.168.55.60 control.ansi.example.com control\n192.168.55.59 repo.ansi.example.com repo\n192.168.55.61 node1.ansi.example.com node1\n192.168.55.62 node2.ansi.example.com node2"
       force: yes
   - name: Starting Services
     service:
@@ -91,5 +91,5 @@
         # This system is running `cat /etc/redhat-release`
         #
         # Repo
-        # Available to use from http://repo.test.example.com/rpms
+        # Available to use from http://repo.ansi.example.com/rpms
         "
