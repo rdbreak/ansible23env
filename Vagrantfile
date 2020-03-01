@@ -1,9 +1,21 @@
 VAGRANTFILE_API_VERSION = "2"
 VAGRANT_DISABLE_VBOXSYMLINKCREATE = "1"
+file_to_disk1 = './disk-0-1.vdi'
+file_to_disk2 = './disk-0-2.vdi'
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 # Use same SSH key for each machine
 config.ssh.insert_key = false
 config.vm.box_check_update = true
+
+# Repo node configuration
+config.vm.define "repo" do |repo|
+  repo.vm.box = "rdbreak/ansible23repo"
+#  repo.vm.hostname = "repo.ansi.example.com"
+  repo.vm.network "private_network", ip: "192.168.55.59"
+  repo.vm.provider "virtualbox" do |repo|
+    repo.memory = "512"
+  end
+end
 
 # Node 1 configuration
 config.vm.define "node1" do |node1|
@@ -12,8 +24,9 @@ config.vm.define "node1" do |node1|
   node1.vm.network "private_network", ip: "192.168.55.61"
   node1.vm.provider "virtualbox" do |node1|
     node1.memory = "512"
-  end
+ end
 end
+
 
 # Node 2 configuration
 config.vm.define "node2" do |node2|
@@ -22,16 +35,6 @@ config.vm.define "node2" do |node2|
   node2.vm.network "private_network", ip: "192.168.55.62"
   node2.vm.provider "virtualbox" do |node2|
     node2.memory = "512"
-  end
-end
-
-# Repo node configuration
-config.vm.define "repo" do |repo|
-  repo.vm.box = "rdbreak/ansible23repo"
-#  repo.vm.hostname = "repo.ansi.example.com"
-  repo.vm.network "private_network", ip: "192.168.55.59"
-  repo.vm.provider "virtualbox" do |repo|
-    repo.memory = "1024"
   end
 end
 

@@ -6,7 +6,7 @@
   become: true
   tasks:
   - name: Setting Hostname
-    hostname: name=node2.test.example.com
+    hostname: name=node2.ansi.example.com
   - name: Creating User Account
     user:
       name: user
@@ -15,6 +15,8 @@
       append: yes
   - name: Changing User Password
     shell: echo password | sudo passwd user --stdin
+  - name: Changing Root Password
+    shell: echo password | sudo passwd root --stdin
   - name: Make sure user is in the sudoers configuration
     lineinfile:
       path: /etc/sudoers
@@ -41,7 +43,7 @@
   - name: Building host file
     copy:
       dest: /etc/hosts
-      content: "127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4\n192.168.55.60 control.test.example.com control\n192.168.55.59 repo.test.example.com repo\n192.168.55.61 node1.test.example.com node1\n192.168.55.62 node2.test.example.com node2"
+      content: "127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4\n192.168.55.59 repo.ansi.example.com repo\n192.168.55.60 control.ansi.example.com control\n192.168.55.61 node1.ansi.example.com node1\n192.168.55.62 node2.ansi.example.com node2"
       force: yes
   - name: Generating RSA Key
     openssh_keypair:

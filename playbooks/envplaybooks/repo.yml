@@ -1,5 +1,6 @@
 ---
-- hosts: repo
+- name: Setting Up Repo Server
+  hosts: repo
   strategy: free
   become: true
   gather_facts: false
@@ -41,7 +42,7 @@
   - name: Building host file
     copy:
       dest: /etc/hosts
-      content: "127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4\n192.168.55.60 control.ansi.example.com control\n192.168.55.59 repo.ansi.example.com repo\n192.168.55.61 node1.ansi.example.com node1\n192.168.55.62 node2.ansi.example.com node2"
+      content: "127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4\n192.168.55.59 repo.ansi.example.com repo192.168.55.60 control.ansi.example.com control\n192.168.55.61 node1.ansi.example.com node1\n192.168.55.62 node2.ansi.example.com node2"
       force: yes
   - name: Enabling services
     service: 
@@ -51,7 +52,6 @@
     with_items:
       - httpd
       - firewalld
-      - chronyd
   - name: Enabling Firewall Services
     firewalld:
       service: "{{ item }}"

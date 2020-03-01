@@ -1,9 +1,7 @@
 ---
 - name: Configuring control node
   hosts: control
-  strategy: free 
-  gather_facts: False
-  become: true
+
   tasks:
   - name: Setting Hostname
     hostname: name=control.ansi.example.com
@@ -15,6 +13,8 @@
       append: yes
   - name: Changing User Password
     shell: echo password | sudo passwd user --stdin
+  - name: Changing Root Password
+    shell: echo password | sudo passwd root --stdin
   - name: Checking Sudoers Configuration
     lineinfile:
       path: /etc/sudoers
@@ -27,7 +27,7 @@
   - name: Building host file
     copy:
       dest: /etc/hosts
-      content: "127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4\n192.168.55.60 control.ansi.example.com control\n192.168.55.59 repo.ansi.example.com repo\n192.168.55.61 node1.ansi.example.com node1\n192.168.55.62 node2.ansi.example.com node2"
+      content: "127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4\n192.168.55.59 repo.ansi.example.com repo\n192.168.55.60 control.ansi.example.com control\n192.168.55.61 node1.ansi.example.com node1\n192.168.55.62 node2.ansi.example.com node2"
       force: yes
   - name: Starting Services
     service:
@@ -53,7 +53,7 @@
       - ldap
       - ftp
   - name: Restarting Firewalld
-    service: name=firewalld state=restarted
+    service: name=firewalld state=restarted enabled=yes
   - name: Removing Existing RSA Key
     shell: rm -f /home/user/.ssh/id_rsa
   - name: Generating New RSA Key
